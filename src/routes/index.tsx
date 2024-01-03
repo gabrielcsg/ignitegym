@@ -1,5 +1,7 @@
 import { useTheme, Box } from 'native-base';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+
+import { AppRoutes } from './app.routes';
 import { AuthRoutes } from './auth.routes';
 
 export function Routes() {
@@ -12,7 +14,7 @@ export function Routes() {
     // the box ensures that the background color does not change when changing screens
     <Box flex={1} bg="gray.700">
       <NavigationContainer theme={theme}>
-        <AuthRoutes />
+        <AppRoutes />
       </NavigationContainer>
     </Box>
   );
