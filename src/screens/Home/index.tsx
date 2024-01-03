@@ -6,7 +6,7 @@ import { Group } from '@components/Group';
 import { HomeHeader } from '@components/HomeHeader';
 
 export function Home() {
-  const [groupSelected, setGroupSelected] = useState<string>('');
+  const [groupSelected, setGroupSelected] = useState<string>('costas');
   const [groups, _setGroups] = useState([
     'costas',
     'ombros',
@@ -29,7 +29,7 @@ export function Home() {
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <Group
-            isActive={groupSelected === item}
+            isActive={groupSelected.toUpperCase() === item.toUpperCase()}
             name={item}
             onPress={() => setGroupSelected(item)}
           />
