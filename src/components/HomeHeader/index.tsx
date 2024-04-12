@@ -4,7 +4,7 @@ import { HStack, Heading, Icon, Text, VStack } from 'native-base';
 import userPhotoDefault from '@assets/userPhotoDefault.png';
 import { MaterialIcons } from '@expo/vector-icons';
 
-import { UserPhoto } from '../UserPhoto';
+import { UserPhoto } from '@components/UserPhoto';
 
 export function HomeHeader() {
   return (
