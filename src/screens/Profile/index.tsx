@@ -9,6 +9,8 @@ import {
   VStack,
 } from 'native-base';
 
+import * as ImagePicker from 'expo-image-picker';
+
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { ScreenHeader } from '@components/ScreenHeader';
@@ -18,6 +20,33 @@ const PHOTO_SIZE = 33;
 
 export function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
+  const [userPhoto, setUserPhoto] = useState(
+    'https://github.com/gabrielcsg.png'
+  );
+
+  async function handleUserPhotoSelect() {
+    try {
+      setPhotoIsLoading(true);
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        aspect: [4, 4],
+        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+      });
+
+      if (photoSelected.canceled) {
+        return;
+      }
+
+      if (photoSelected.assets?.[0]?.uri) {
+        setUserPhoto(photoSelected.assets[0]?.uri);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setPhotoIsLoading(false);
+    }
+  }
 
   return (
     <VStack flex={1}>
@@ -35,13 +64,13 @@ export function Profile() {
             />
           ) : (
             <UserPhoto
-              source={{ uri: 'https://github.com/gabrielcsg.png' }}
+              source={{ uri: userPhoto }}
               alt="Foto do usuário"
               size={PHOTO_SIZE}
             />
           )}
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleUserPhotoSelect}>
             <Text
               color="green.500"
               fontSize="md"
