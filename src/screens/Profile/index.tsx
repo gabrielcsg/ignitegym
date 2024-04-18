@@ -1,4 +1,4 @@
-import { TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import {
   Center,
@@ -7,9 +7,11 @@ import {
   Skeleton,
   Text,
   VStack,
+  useToast,
 } from 'native-base';
 
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
@@ -23,6 +25,8 @@ export function Profile() {
   const [userPhoto, setUserPhoto] = useState(
     'https://github.com/gabrielcsg.png'
   );
+
+  const toast = useToast();
 
   async function handleUserPhotoSelect() {
     try {
@@ -39,7 +43,17 @@ export function Profile() {
       }
 
       if (photoSelected.assets?.[0]?.uri) {
-        setUserPhoto(photoSelected.assets[0]?.uri);
+        const { uri: photoUri } = photoSelected.assets[0];
+        const photoInfo = await FileSystem.getInfoAsync(photoUri);
+
+        if (photoInfo.exists && photoInfo.size / 1024 / 1024 > 5) {
+          return toast.show({
+            placement: 'top',
+            bgColor: 'red.500',
+            title: 'Essa imagem é muito grande, escolha uma de até 5MB.',
+          });
+        }
+        setUserPhoto(photoUri);
       }
     } catch (error) {
       console.log(error);
