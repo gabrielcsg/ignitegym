@@ -30,7 +30,12 @@ export function ExerciseCard({ name, ...rest }: Props) {
         />
 
         <VStack flex={1}>
-          <Heading fontSize="lg" color="white" numberOfLines={1}>
+          <Heading
+            fontSize="lg"
+            color="white"
+            numberOfLines={1}
+            fontFamily="heading"
+          >
             {name}
           </Heading>
           <Text fontSize="sm" color="gray.200" ml={1} numberOfLines={2}>
