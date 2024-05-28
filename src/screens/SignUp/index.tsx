@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { useState } from 'react';
 import {
   Center,
   Image,
@@ -20,6 +20,7 @@ import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { api } from '@services/api';
 import { AppError } from '@utils/AppError';
+import { useAuth } from '@hooks/useAuth';
 
 type FormDataProps = {
   name: string;
@@ -44,6 +45,7 @@ const signUpSchema = yup.object({
 export function SignUp() {
   const navigation = useNavigation();
   const toast = useToast();
+  const { signIn } = useAuth();
   const {
     control,
     handleSubmit,
@@ -52,15 +54,24 @@ export function SignUp() {
     resolver: yupResolver(signUpSchema),
   });
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   function handleGoBack() {
     navigation.goBack();
   }
 
   async function handleSignUp({ name, email, password }: FormDataProps) {
     try {
-      const response = await api.post('/users', { name, email, password });
-      console.log(response.data);
+      setIsLoading(true);
+      await api.post('/users', { name, email, password });
+      toast.show({
+        placement: 'top',
+        bgColor: 'green.500',
+        title: 'Conta criada com sucesso!',
+      });
+      await signIn(email, password);
     } catch (error) {
+      setIsLoading(false);
       const title =
         error instanceof AppError
           ? error.message
@@ -161,6 +172,7 @@ export function SignUp() {
           <Button
             title="Criar e acessar"
             onPress={handleSubmit(handleSignUp)}
+            isLoading={isLoading}
           />
         </Center>
 
