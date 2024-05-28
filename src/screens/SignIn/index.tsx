@@ -1,4 +1,13 @@
-import { Center, Image, Heading, Text, VStack, ScrollView } from 'native-base';
+import { useState } from 'react';
+import {
+  Center,
+  Image,
+  Heading,
+  Text,
+  VStack,
+  ScrollView,
+  useToast,
+} from 'native-base';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
@@ -10,6 +19,8 @@ import LogoSvg from '@assets/logo.svg';
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
+import { useAuth } from '@hooks/useAuth';
+import { AppError } from '@utils/AppError';
 
 type FormDataProps = {
   email: string;
@@ -23,6 +34,9 @@ const signInSchema = yup.object({
 
 export function SignIn() {
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
+  const toast = useToast();
+  const { signIn } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
     control,
@@ -36,8 +50,22 @@ export function SignIn() {
     navigation.navigate('signUp');
   }
 
-  function handleSignIn(data: FormDataProps) {
-    console.log(data);
+  async function handleSignIn({ email, password }: FormDataProps) {
+    try {
+      setIsLoading(true);
+      await signIn(email, password);
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError
+        ? error.message
+        : 'Não foi possivel entrar. Tente novamente mais tarde.';
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      });
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -95,7 +123,11 @@ export function SignIn() {
             )}
           />
 
-          <Button title="Acessar" onPress={handleSubmit(handleSignIn)} />
+          <Button
+            title="Acessar"
+            onPress={handleSubmit(handleSignIn)}
+            isLoading={isLoading}
+          />
         </Center>
 
         <Center mt={24}>
