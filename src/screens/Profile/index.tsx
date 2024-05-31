@@ -65,9 +65,6 @@ export function Profile() {
 
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [photoIsLoading, setPhotoIsLoading] = useState<boolean>(false);
-  const [userPhoto, setUserPhoto] = useState(
-    'https://github.com/gabrielcsg.png'
-  );
 
   const {
     control,
@@ -95,8 +92,8 @@ export function Profile() {
         return;
       }
 
-      if (photoSelected.assets?.[0]?.uri) {
-        const { uri: photoUri } = photoSelected.assets[0];
+      if (photoSelected.assets.length) {
+        const { uri: photoUri, type: photoType } = photoSelected.assets[0];
         const photoInfo = await FileSystem.getInfoAsync(photoUri);
 
         if (photoInfo.exists && photoInfo.size / 1024 / 1024 > 5) {
@@ -106,7 +103,37 @@ export function Profile() {
             title: 'Essa imagem é muito grande, escolha uma de até 5MB.',
           });
         }
-        setUserPhoto(photoUri);
+
+        const fileExtension = photoUri.split('.').pop();
+        const photoFile = {
+          name: `${user.name}.${fileExtension}`.toLowerCase(),
+          uri: photoUri,
+          type: `${photoType}/${fileExtension}`,
+        } as any;
+
+        const userPhotoUploadForm = new FormData();
+        userPhotoUploadForm.append('avatar', photoFile);
+
+        const avatarUpdatedResponse = await api.patch(
+          '/users/avatar',
+          userPhotoUploadForm,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+
+        await updateUserProfile({
+          ...user,
+          avatar: avatarUpdatedResponse.data.avatar,
+        });
+
+        toast.show({
+          title: 'Foto atualizada com sucesso',
+          placement: 'top',
+          bgColor: 'green.500',
+        });
       }
     } catch (error) {
       console.log(error);
@@ -157,7 +184,7 @@ export function Profile() {
             />
           ) : (
             <UserPhoto
-              source={{ uri: userPhoto }}
+              source={{ uri: `${api.defaults.baseURL}/avatar/${user.avatar}` }}
               alt="Foto do usuário"
               size={PHOTO_SIZE}
             />
