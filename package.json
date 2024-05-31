@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.3",
-    "@hookform/resolvers": "^3.3.4",
+    "@hookform/resolvers": "^3.4.2",
+    "@react-native-async-storage/async-storage": "1.18.2",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
@@ -27,8 +28,7 @@
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-svg": "13.9.0",
-    "yup": "^1.4.0",
-    "@react-native-async-storage/async-storage": "1.18.2"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
