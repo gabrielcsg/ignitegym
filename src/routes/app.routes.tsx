@@ -17,7 +17,7 @@ import HomeSvg from '@assets/home.svg';
 
 type AppRoutes = {
   home: undefined;
-  exercise: undefined;
+  exercise: { exerciseId: string };
   history: undefined;
   profile: undefined;
 };
